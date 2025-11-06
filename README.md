@@ -2,7 +2,6 @@
 
 智能零售商品识别系统/
 ├── README.md                           # 项目说明文档
-├── 📁 temp/                           # 测试例图
 │
 ├── 📁 templates/
 │   ├── index.html                  # 主入口页面
