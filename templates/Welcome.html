@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎进入系统</title>
+    <style>
+        body {
+            font-family: 'SimSun', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0ebe3;
+            position: relative;
+        }
+        h1 {
+            font-size: 52px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 80px;
+        }
+        .button-container {
+            display: flex;
+            gap: 20px;
+            width: 90%;
+        }
+        .button {
+            padding: 150px 60px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 64px;
+            flex: 1;
+            text-align: center;
+        }
+        .button商品结算 {
+            background-color: #333;
+            color: #fff;
+        }
+        .button商品结算:hover {
+            background-color: #555;
+        }
+        .button库存管理 {
+            background-color: #8b5e3c;
+            color: #fff;
+        }
+        .button库存管理:hover {
+            background-color: #a06a4b;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #bc9883;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 40px;
+                margin-bottom: 40px;
+            }
+            .button {
+                padding: 80px 40px;
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="location.href='{{ url_for('index') }}';">上一页</button>
+    <h1>欢迎进入系统！</h1>
+    <div class="button-container">
+        <div class="button button商品结算" onclick="location.href='/Settlement.html';">商品结算</div>
+        <div class="button button库存管理" onclick="location.href='/Register&Login.html';">库存管理</div>
+    </div>
+</body>
+</html>

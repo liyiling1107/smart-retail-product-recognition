@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>店员注册登录</title>
+    <style>
+        body {
+            font-family: 'SimHei', 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #e5e1d8;
+            padding: 30px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 400px; 
+            position: relative; 
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .button {
+            background-color: #8b5e3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #a06a4b;
+        }
+        .button-container {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .button-container button:first-child {
+            margin-left: 20px; 
+        }
+        .button-container button:last-child {
+            margin-right: 0px; 
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #bc9883;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 24px;
+            }
+            .form-group input {
+                font-size: 14px;
+            }
+            .button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="location.href='Welcome.html';">上一页</button>
+    <div class="container">
+        <div class="title">店员注册登录</div>
+        <form id="register-login-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="button-container">
+                <button type="button" class="button" onclick="login()">登录</button>
+                <button type="button" class="button" onclick="register()">注册</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `username=${username}&password=${password}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.message === '注册成功') {
+                    location.href = 'Price_management.html';
+                }
+            });
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `username=${username}&password=${password}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.message === '登录成功') {
+                    location.href = 'Price_management.html'; // 确保路径正确
+                }
+            })
+            .catch(error => {
+                console.error('登录请求失败:', error);
+                alert('登录请求失败，请检查网络或联系管理员');
+            });
+        }
+    </script>
+</body>
+</html>

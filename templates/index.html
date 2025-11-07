@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能零售场景下的商品识别与动态管理系统</title>
+    <style>
+        body {
+            font-family: 'SimSun', sans-serif;
+            background-color: #f0e6d2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            position: relative;
+        }
+        .container {
+            background-color: #3c3c3c;
+            color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            height: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 2000px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .header {
+            font-size: 64px;
+            font-weight: bold;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+        .info {
+            font-size: 44px;
+            line-height: 1.0;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+        .footer {
+            background-color: #c29274;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .arrow {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-top: 50px solid #3c3c3c;
+        }
+        @media (max-width: 768px) {
+            .header {
+                font-size: 48px;
+            }
+            .info {
+                font-size: 32px;
+            }
+            .footer {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body onclick="location.href='{{ url_for('welcome') }}';">
+    <div class="container">
+        <div class="header">智能零售场景下<br>商品识别与动态管理系统</div>
+        <div class="info">专业：人工智能<br>年级：2022级</div>
+        <div class="footer">
+            人工智能综合创新实践23组：丁昭夫、李怡灵、杨锡庆
+        </div>
+    </div>
+    <div class="arrow"></div>
+</body>
+</html>

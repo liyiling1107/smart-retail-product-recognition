@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品结算</title>
+    <style>
+        body {
+            font-family: 'SimHei', 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 90px auto;
+            background-color: #e5e1d8;
+            padding: 30px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 500px;
+        }
+        .left-section {
+            width: 40%;
+            height: 90%;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .right-section {
+            width: 55%;
+            height: 90%;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .circle-placeholder {
+            width: 320px;
+            height: 320px;
+            border: 2px solid #8b5e3c;
+            border-radius: 50%;
+            margin-bottom: 40px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .button {
+            background-color: #add8e6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .button:hover {
+            background-color: #87CEEB;
+        }
+        .button-confirm {
+            background-color: #a3cba4;
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .button-confirm:hover {
+            background-color: #89b79e;
+        }
+        .button-confirm-payment {
+            background-color: #a3cba4;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .button-confirm-payment:hover {
+            background-color: #89b79e;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            margin-bottom: 20px;
+        }
+        .shopping-list-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: black;
+            margin-bottom: 10px;
+        }
+        .total-price-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: black;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .shopping-list {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 2px solid #8b5e3c;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .total-price {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 2px solid #8b5e3c;
+            border-radius: 5px;
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #bc9883;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 90%;
+            }
+            .left-section, .right-section {
+                width: 100%;
+            }
+            .circle-placeholder {
+                width: 200px;
+                height: 200px;
+            }
+            .button {
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+            .title {
+                font-size: 20px;
+            }
+            .shopping-list-title, .total-price-title {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="location.href='Welcome.html';">上一页</button>
+    <div class="container">
+        <div class="left-section">
+            <div class="title">商品结算</div>
+            <div class="circle-placeholder">
+                <img id="image-preview" src="" alt="图片预览" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            </div>
+            <div class="button-container">
+                <button class="button" onclick="openFileInput()">开始录入</button>
+                <button class="button button-confirm" onclick="addToShoppingList()">确定</button>
+                <button class="button" onclick="clearPreview()">结束录入</button>
+            </div>
+            <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="displayImage(this)">
+        </div>
+        <div class="right-section">
+            <div class="shopping-list-title">购物清单：</div>
+            <div class="shopping-list" id="shopping-list">
+                <!-- 识别结果商品名与价格将显示于此 -->
+            </div>
+            <div class="total-price-title">账单总价：</div>
+            <div class="total-price">
+                <span id="total-price-value">总价：0 元</span>
+                <button class="button-confirm button-confirm-payment" onclick="confirmPayment()">确认支付</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let total = 0;
+
+        function openFileInput() {
+            document.getElementById('file-input').click();
+        }
+
+        function displayImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imagePreview = document.getElementById('image-preview');
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearPreview() {
+            document.getElementById('image-preview').src = '';
+            document.getElementById('file-input').value = '';
+        }
+
+        async function addToShoppingList() {
+            const fileInput = document.getElementById('file-input');
+            if (fileInput.files.length === 0) {
+                alert('请先选择图片！');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                const predictions = data.predictions;
+
+                if (predictions.length === 0) {
+                    alert('未检测到商品，请重新尝试！');
+                    return;
+                }
+
+                const shoppingList = document.getElementById('shopping-list');
+
+                predictions.forEach(prediction => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.style.display = 'flex';
+                    itemDiv.style.justifyContent = 'space-between';
+                    itemDiv.style.alignItems = 'center';
+                    itemDiv.style.width = '100%';
+
+                    const itemName = document.createElement('span');
+                    const itemPrice = document.createElement('span');
+
+                    itemName.textContent = `商品名：${prediction.label}`;
+                    const price = prediction.price ? parseFloat(prediction.price) : 0;
+                    itemPrice.textContent = `价格：${price.toFixed(2)} 元`;
+
+                    itemName.style.width = '50%';
+                    itemPrice.style.width = '50%';
+                    itemName.style.textAlign = 'left';
+                    itemPrice.style.textAlign = 'right';
+
+                    itemDiv.appendChild(itemName);
+                    itemDiv.appendChild(itemPrice);
+
+                    const separator = document.createElement('hr');
+                    separator.style.border = '1px dashed #ccc';
+                    separator.style.width = '100%';
+                    separator.style.margin = '10px 0';
+
+                    shoppingList.appendChild(itemDiv);
+                    shoppingList.appendChild(separator);
+
+                    total += price;
+                });
+
+                document.getElementById('total-price-value').textContent = `总价：${total.toFixed(2)} 元`;
+
+                clearPreview();
+            } catch (error) {
+                console.error('识别失败:', error);
+                alert('识别失败，请重试。');
+            }
+        }
+
+        async function confirmPayment() {
+            const shoppingList = document.getElementById('shopping-list');
+            const items = shoppingList.getElementsByTagName('div');  // 获取购物清单中的所有商品项
+
+            const shoppingListData = [];
+            for (let i = 0; i < items.length; i += 2) {  // 每个商品项和分隔线为一组
+                const itemDiv = items[i];
+                const itemName = itemDiv.children[0].textContent.split('：')[1];  // 提取商品名
+                const itemPrice = parseFloat(itemDiv.children[1].textContent.split('：')[1]);  // 提取价格
+                shoppingListData.push({ label: itemName, price: itemPrice });
+            }
+
+            try {
+                const response = await fetch('/update_stock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(shoppingListData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                if (data.message === '库存更新成功') {
+                    alert('支付成功，库存已更新！');
+                } else {
+                    alert('支付成功，但库存更新失败！');
+                }
+
+                shoppingList.innerHTML = '';
+                document.getElementById('total-price-value').textContent = '总价：0 元';
+                total = 0;
+            } catch (error) {
+                console.error('库存更新失败:', error);
+                alert('支付成功，但库存更新失败！');
+            }
+        }
+    </script>
+</body>
+</html>

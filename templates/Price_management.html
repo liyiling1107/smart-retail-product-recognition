@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>价格管理</title>
+    <style>
+        body {
+            font-family: 'SimHei', 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #e5e1d8;
+            padding: 30px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 800px;
+            position: relative;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .search-group {
+            margin-bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .search-group input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .search-group button {
+            background-color: #8b5e3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        .search-group button:hover {
+            background-color: #a06a4b;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        .modify-button {
+            background-color: #add8e6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .modify-button:hover {
+            background-color: #87CEEB;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #bc9883;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 24px;
+            }
+            .search-group input {
+                font-size: 14px;
+            }
+            .search-group button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            .result-table th, .result-table td {
+                padding: 8px;
+            }
+            .modify-button {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="location.href='Register&Login.html';">上一页</button>
+    <div class="container">
+        <div class="title">价格管理</div>
+        <div class="search-group">
+            <input type="text" id="search-input" placeholder="请输入商品名">
+            <button onclick="searchProduct()">搜索</button>
+        </div>
+        <table class="result-table" id="result-table">
+            <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>商品库存</th>
+                    <th>商品价格</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 搜索结果将在这里动态生成 -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function searchProduct() {
+            const searchInput = document.getElementById('search-input').value;
+            const resultTable = document.getElementById('result-table').getElementsByTagName('tbody')[0];
+            resultTable.innerHTML = '';
+
+            // 发送搜索请求到后端
+            fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `search_term=${searchInput}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                Object.keys(data).forEach(key => {
+                    const row = resultTable.insertRow();
+                    const nameCell = row.insertCell(0);
+                    const stockCell = row.insertCell(1);
+                    const priceCell = row.insertCell(2);
+                    const actionCell = row.insertCell(3);
+
+                    nameCell.textContent = key;
+                    stockCell.textContent = data[key].stock; // 显示库存
+                    const priceInput = document.createElement('input');
+                    priceInput.type = 'number';
+                    priceInput.value = data[key].price;
+                    priceInput.disabled = true;
+                    priceCell.appendChild(priceInput);
+
+                    const modifyButton = document.createElement('button');
+                    modifyButton.textContent = '修改价格';
+                    modifyButton.className = 'modify-button';
+                    modifyButton.onclick = function() {
+                        priceInput.disabled = !priceInput.disabled;
+                        if (!priceInput.disabled) {
+                            modifyButton.textContent = '保存修改';
+                        } else {
+                            modifyButton.textContent = '修改价格';
+                            // 发送更新请求到后端
+                            fetch('/update', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: `product_name=${key}&new_price=${priceInput.value}`
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === "更新成功") {
+                                    alert(`商品 ${key} 的价格已修改为 ${priceInput.value} 元`);
+                                } else {
+                                    alert(data.message);
+                                }
+                            });
+                        }
+                    };
+                    actionCell.appendChild(modifyButton);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
